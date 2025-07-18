@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch  } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import axios from 'axios';
+import { useSystemStore } from '@/stores/systemStore';
 
 // Definimos la estructura de un ranking
 interface Ranking {
   id: string;
   score: number;
 }
+
+const systemStore = useSystemStore();
 
 // Creamos variables reactivas para almacenar los datos
 const victoriesRanking = ref<Ranking[]>([]);
@@ -41,6 +44,11 @@ const fetchRankings = async () => {
 
 // onMounted es un "hook" de Vue que se ejecuta cuando el componente está listo
 onMounted(() => {
+  fetchRankings();
+});
+
+watch(() => systemStore.refreshKey, () => {
+  console.log('Hall of Fame detected a refresh signal. Fetching new data...');
   fetchRankings();
 });
 </script>
